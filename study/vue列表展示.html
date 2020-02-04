@@ -10,19 +10,18 @@
 </head>
 
 <body>
-    <div id="ap">{{message}}</div>
-    <div id="ab"></div>
+    <div id="app">
+        <ul>
+            <li v-for="item in movies">{{item}}</li>
+        </ul>
+    </div>
     <script>
         const app = new Vue({
-                el: '#ap',
-                data: {
-                    message: '很好！'
-                }
-            })
-            // let ab = document.querySelector('#ab')
-            // let mes = '是真的'
-            // ab.innerHTML = mes
-            // document.body.appendChild(ab)
+            el: '#app',
+            data: {
+                movies: ['大圣归来', '哪吒', '大话西游']
+            }
+        })
     </script>
 </body>
 
