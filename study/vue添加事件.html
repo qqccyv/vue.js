@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <h1>{{count}}</h1>
+        <!-- 点击事件主体也要在托管的元素范围内，不然无法添加事件 -->
+        <!-- <button v-on:click="count++">+</button>
+        <button v-on:click="count--">-</button> -->
+
+
+        <button v-on:click="increament">+</button>
+        <button v-on:click="decreament">-</button>
+
+
+    </div>
+
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                count: 0
+            },
+            methods: {
+                increament: function() {
+                    this.count++
+                },
+                decreament: function() {
+                        this.count--
+
+                    }
+                    // decreament: () => {
+                    //     console.log(this.count);  count 显示undefined！！
+
+                // }
+            }
+        })
+    </script>
+</body>
+
+</html>
