@@ -44,6 +44,18 @@
                 //     // count 显示undefined！！
 
                 // }
+            },
+            beforeCreate: function() {
+                console.log('beforeCreate');
+
+            },
+            created: function() {
+                console.log('create');
+
+            },
+            mounted: function() {
+                console.log('mounted');
+
             }
         })
     </script>
