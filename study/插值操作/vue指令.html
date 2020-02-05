@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+
+        <h2>{{message}}邓宇</h2>
+        <!-- 可以拼接其他数据 -->
+        <h2 v-once>{{message}}</h2>
+        <!-- 只会被渲染一次 -->
+        <h2 v-html="url"></h2>
+        <!-- 渲染带有html标签的数据 -->
+        <h2 v-text='message'>邓宇</h2>
+        <!-- 标签中的内容会被覆盖 -->
+    </div>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                message: '你好啊',
+                url: '<a href="http://www.baidu.com">百度一下，你就知道</a>'
+            }
+        })
+    </script>
+</body>
+
+</html>
