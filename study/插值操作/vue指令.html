@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
     <script src="../js/vue.js"></script>
 </head>
 
@@ -20,15 +25,23 @@
         <!-- 渲染带有html标签的数据 -->
         <h2 v-text='message'>邓宇</h2>
         <!-- 标签中的内容会被覆盖 -->
+
+        <h2 v-pre>{{message}}</h2>
+        <!-- 原文输出 -->
+
+        <h2 v-cloak>hahahah</h2>
+        <!-- 只有在通过js处理过后才会显示在页面中 -->
     </div>
     <script>
-        const app = new Vue({
-            el: '#app',
-            data: {
-                message: '你好啊',
-                url: '<a href="http://www.baidu.com">百度一下，你就知道</a>'
-            }
-        })
+        setTimeout(function() {
+            const app = new Vue({
+                el: '#app',
+                data: {
+                    message: '你好啊',
+                    url: '<a href="http://www.baidu.com">百度一下，你就知道</a>'
+                }
+            })
+        }, 1000)
     </script>
 </body>
 
