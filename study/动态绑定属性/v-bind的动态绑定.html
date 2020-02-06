@@ -18,6 +18,8 @@
     <div id="app">
         <h1 v-bind:class="{active: isActive, line: isLine}">{{message}}</h1>
         <input type="submit" value="提交" v-on:click="btnClick">
+        <h2 :class="getClass()">{{message}}</h2>
+        <h2 :class="[current,onblur]">{{message}}</h2>
     </div>
     <script>
         const app = new Vue({
@@ -25,11 +27,19 @@
             data: {
                 message: 'Are you ok!',
                 isActive: true,
-                isLine: true
+                isLine: true,
+                current: 'aaaa',
+                onblur: 'bbbbb'
             },
             methods: {
                 btnClick: function() {
                     this.isActive = !this.isActive
+                },
+                getClass: function() {
+                    return {
+                        active: this.isActive,
+                        line: this.isLine
+                    }
                 }
             }
         })
