@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .active {
+            color: red;
+        }
+    </style>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <ul>
+            <li v-for="(m,index) in movies" :class="{active: addClass(index)}" @click="current(index)">{{index}}{{m}}</li>
+        </ul>
+    </div>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                movies: ['玩家一号', '西虹市首富', '逃跑可耻但很有用'],
+                currentIndex: 0 //记录当前状态    属性    很重要！！！！！！！！！！！
+            },
+            methods: {
+                current: function(index) {
+                    this.currentIndex = index
+                },
+                addClass: function(index) {
+                    return index == this.currentIndex
+
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
