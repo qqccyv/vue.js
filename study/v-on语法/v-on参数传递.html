@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 没有参数传递时可以不加小括号 -->
+        <button @click="btn1Click">按钮1</button>
+        <!-- 手动传递事件变量 -->
+        <button @click="btn2Click(123,$event)">按钮2</button>
+        <!-- 参数没有引号时，vue框架把参数当做变量解析，就会去data中寻找 -->
+        <button @click="btn3Click(abc,$event)">按钮3</button>
+    </div>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                message: '你好啊',
+                abc: 'Hi'
+            },
+            methods: {
+                btn1Click() {
+                    console.log(event); //没有参数传递时，就只有一个鼠标事件对象产生
+
+                },
+                btn2Click(abc, event) {
+                    console.log(abc, event);
+
+                },
+                btn3Click(abc, event) {
+                    console.log(abc, event);
+
+                },
+            }
+        })
+    </script>
+</body>
+
+</html>
