@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-model.lazy="userName">
+
+        <h2>{{tips}}</h2>
+    </div>
+</body>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            userName: '',
+            tips: ''
+        },
+        methods: {
+            //模拟异步验证
+            checkName: function(userName) {
+                let that = this
+                setTimeout(function() {
+                    if (userName == 'admin') {
+                        that.tips = '该账户名已经被使用了，请换一个'
+                    } else {
+                        that.tips = '恭喜该账户名可以使用'
+                    }
+                }, 1000)
+            }
+        },
+        watch: {
+            // 侦听dom元素变化
+            userName: function(val) {
+                this.checkName(val) //方法调用也要加this
+                this.tips = '验证中.....'
+            }
+        },
+    })
+</script>
+
+</html>
