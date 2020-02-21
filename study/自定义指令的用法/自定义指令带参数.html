@@ -10,21 +10,16 @@
 
 <body>
     <div id="app">
-        <input type="text" id="" v-focus>
+        <input type="text" id="" v-color="message">
 
     </div>
 </body>
 <script>
-    // Vue.directive('focus', {
-    //     inserted: function(el) {
-    //         el.focus()
-    //     }
-    // })
-    //定义一个自定义指令“focus”  将函数插入focus指令中 绑定元素作为形参传入函数
-    //自定义属性只能在一个元素上使用，多个使用时最后一个生效
-    Vue.directive('focus', {
-        inserted: function(el) {
-            el.focus()
+    //定义一个带参数的自定义指令  参数通过binding形参传入  通过binding.value属性得到  在函数内部处理
+    Vue.directive('color', {
+        bind: function(el, binding) {
+            console.log(binding);
+            el.style.backgroundColor = binding.value
         }
     })
     const vm = new Vue({
