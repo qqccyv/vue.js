@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <form>
+            <input type="text" v-model="firstName"> <br>
+            <input type="text" v-model="lastName"> <br>
+            <div>{{fullName? fullName:''}}</div>
+        </form>
+    </div>
+</body>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            firstName: '',
+            lastName: '',
+            fullName: ''
+        },
+        //侦听器，当被侦听的数据发生改变时，就触发被绑定的方法。适合较为复杂的需求。  计算属性自带侦听功能
+        watch: {
+            firstName: function(val) {
+                this.fullName = val + ' ' + this.lastName
+            },
+            lastName: function(val) {
+                this.fullName = this.firstName + ' ' + val
+            }
+        }
+    })
+</script>
+
+</html>
