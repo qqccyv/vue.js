@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" id="" v-focus>
+
+    </div>
+</body>
+<script>
+    // Vue.directive('focus', {
+    //     inserted: function(el) {
+    //         el.focus()
+    //     }
+    // })
+    //定义一个自定义指令“focus”  将函数插入focus指令中 绑定元素作为形参传入函数
+    Vue.directive('focus', {
+        inserted: function(el) {
+            el.focus()
+        }
+    })
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            message: 'red'
+        }
+    })
+</script>
+
+</html>
