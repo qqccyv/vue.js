@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text">
+    <div></div>
+</body>
+<script>
+    let ipt = document.querySelector('input')
+    let div = document.querySelector('div')
+    let data = {
+        msg: 'hello world'
+    }
+    Object.defineProperty(data, 'msg', {
+        // 当属性值修改时，触发执行该方法。该方法将接受唯一参数，即该属性新的参数值。
+        set(val) {
+            div.innerHTML = val
+            ipt.value = val
+        }
+    })
+    ipt.oninput = function() {
+        data.msg = this.value
+    }
+</script>
+
+</html>
