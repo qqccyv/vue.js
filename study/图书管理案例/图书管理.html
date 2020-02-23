@@ -98,11 +98,24 @@
             },
             methods: {
                 submit: function() {
+                    if (this.flag) {
+                        console.log(this);
 
-                    let book = {}
-                    book.id = this.id;
-                    book.name = this.name
-                    this.books.push(book)
+                        this.books.some(value => { //这里用传统函数this指向的是点击事件的window  要用箭头函数绑定this到当前函数的上下文Vue实例上
+                            if (value.id == this.id) {
+                                value.name = this.name
+                                return true
+                            }
+                        })
+                        this.flag = false
+                    } else {
+                        let book = {}
+                        book.id = this.id;
+                        book.name = this.name
+                        this.books.push(book)
+                    }
+
+
                     this.id = ''
                     this.name = ''
                 },
