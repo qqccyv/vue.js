@@ -130,10 +130,14 @@
                     this.name = book[0].name
                 },
                 deleteBook: function(id) {
-                    let index = this.books.findIndex(function(item, index) {
-                        return item.id == id
+                    // let index = this.books.findIndex(function(item, index) {
+                    //     return item.id == id
+                    // })
+                    // this.books.splice(index, 1)
+                    this.books = this.books.filter(function(item) {
+                        return item.id != id
                     })
-                    this.books.splice(index, 1)
+
                 }
             },
         });
