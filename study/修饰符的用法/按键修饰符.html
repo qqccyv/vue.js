@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" @keyup.enter="handle">
+        <p>{{msg}}</p>
+    </div>
+</body>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            msg: ''
+        },
+        methods: {
+            handle() {
+                this.msg = document.querySelector('input').value
+            }
+        },
+    })
+</script>
+
+</html>
