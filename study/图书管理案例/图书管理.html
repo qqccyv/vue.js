@@ -63,7 +63,8 @@
                         <td>
                             <a href="" @click.prevent="toEdit(item.id)">修改</a>
                             <span>|</span>
-                            <a href="" @click.prevent="delete(item.id)">删除</a>
+                            <!-- 绑定方法的命名不能为关键词 ，类似delete -->
+                            <a href="" @click.prevent="deleteBook(item.id)">删除</a>
                         </td>
                     </tr>
                 </tbody>
@@ -127,6 +128,12 @@
                     })
                     this.id = book[0].id
                     this.name = book[0].name
+                },
+                deleteBook: function(id) {
+                    let index = this.books.findIndex(function(item, index) {
+                        return item.id == id
+                    })
+                    this.books.splice(index, 1)
                 }
             },
         });
