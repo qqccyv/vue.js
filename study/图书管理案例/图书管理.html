@@ -40,13 +40,16 @@
                         <label for="id">
                             编号：
                             <!-- disabled在行内中必须通过v-bind绑定后才能赋值修改 -->
-                            <input type="text" id="id" v-model="id" :disabled="flag">
+                            <input type="text" id="id" v-model="id" :disabled="flag" v-focus>
                         </label>
                         <label for="name">
                             书名：
                             <input type="text" id="name" v-model="name" >
                         </label>
-                        <button @click="submit">提交</button>
+                        <button @click="submit" :disabled="submitFlag">提交</button>
+                    </tr>
+                    <tr>
+                        图书总共有：{{total}} 本
                     </tr>
                     <tr>
                         <th>编号</th>
@@ -77,25 +80,16 @@
             el: '#app',
             data: {
                 flag: false,
+                submitFlag: false,
                 id: '',
                 name: '',
-                books: [{
-                    id: 1,
-                    name: '三国演义',
-                    date: ''
-                }, {
-                    id: 2,
-                    name: '水浒传',
-                    date: ''
-                }, {
-                    id: 3,
-                    name: '红楼梦',
-                    date: ''
-                }, {
-                    id: 4,
-                    name: '西游记',
-                    date: ''
-                }]
+                books: []
+            },
+            //将小说的总数作为计算属性表示
+            computed: {
+                total() {
+                    return this.books.length
+                }
             },
             methods: {
                 submit: function() {
@@ -139,6 +133,45 @@
                     })
 
                 }
+            },
+            //侦听name属性的变化
+            watch: {
+                name(val) {
+                    this.submitFlag = this.books.some(function(item) {
+                        return item.name == val
+                    })
+                }
+            },
+            //局部自定义指令
+            directives: {
+                focus: {
+                    inserted(el) {
+                        el.focus()
+                    }
+                }
+            },
+            //模板可用后，模拟向后台获取数据
+            //这是一个钩子函数！！！
+            mounted() {
+                var data = [{
+                    id: 1,
+                    name: '三国演义',
+                    date: ''
+                }, {
+                    id: 2,
+                    name: '水浒传',
+                    date: ''
+                }, {
+                    id: 3,
+                    name: '红楼梦',
+                    date: ''
+                }, {
+                    id: 4,
+                    name: '西游记',
+                    date: ''
+                }];
+                this.books = data
+
             },
         });
     </script>
