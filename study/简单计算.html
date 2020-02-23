@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p>a: <input type="text" v-model="a"> </p>
+        <p>b: <input type="text" v-model="b"> </p>
+        <input type="button" value="计算" @click="getResult">
+        <h2>{{result}}</h2>
+    </div>
+</body>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            a: '',
+            b: '',
+            result: ''
+        },
+        methods: {
+            getResult() {
+                this.result = parseInt(this.a) + parseInt(this.b)
+            }
+        },
+    })
+</script>
+
+</html>
