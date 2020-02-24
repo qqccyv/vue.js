@@ -7,11 +7,14 @@
     <title>Document</title>
     <script src="js/vue.js"></script>
 </head>
-<div id="app">
-    <input type="text" :value="num" @blur="handle">
-</div>
 
 <body>
+    <div id="app">
+        <input type="text" :value="num" @blur="handle">
+        <!-- 表单的双向绑定v-model不存在这个问题 -->
+        <input type="text" v-model="num" @blur="handle">
+    </div>
+
     <script>
         const vm = new Vue({
             el: '#app',
@@ -22,8 +25,10 @@
                 handle(event) {
                     console.log(event.target.value);
                     if (event.target.value < 0) {
-                        this.num = ''
+                        this.num = '' //改变一下变量的类型或者值
                         this.num = 0 //数据和data中重复设置不会成功 需要有所改变 类型或者值
+                        console.log(this.num);
+
                     }
 
                 }
