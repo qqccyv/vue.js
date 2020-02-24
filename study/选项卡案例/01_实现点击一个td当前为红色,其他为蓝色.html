@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <style>
+        table {
+            margin: auto;
+        }
+        
+        .td {
+            width: 40px;
+            height: 40px;
+            background-color: skyblue;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .td.selected {
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>题目1:实现点击一个td当前为红色,其他为蓝色</h3>
+    <div id="app">
+        <table>
+            <tr v-for="item in list">
+                <td class="td" v-for="subItem in item" :key="subItem.text" @click="handle(subItem.text)" :class="{selected: subItem.text==currentIndex}">{{subItem.text}}</td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        let vm = new Vue({
+            el: '#app',
+            data: {
+                currentIndex: '',
+                list: [
+                    [{
+                        text: '1'
+                    }, {
+                        text: '2'
+                    }, {
+                        text: '3'
+                    }],
+                    [{
+                        text: '4'
+                    }, {
+                        text: '5'
+                    }, {
+                        text: '6'
+                    }],
+                    [{
+                        text: '7'
+                    }, {
+                        text: '8'
+                    }, {
+                        text: '9'
+                    }]
+                ]
+            },
+            methods: {
+                handle(index) {
+                    this.currentIndex = index
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
