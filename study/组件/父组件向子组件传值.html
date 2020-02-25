@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <menu-item :pmsg="pmsg"></menu-item>
+    </div>
+</body>
+<script>
+    Vue.component('menu-item', {
+        props: ['pmsg'],
+        data() {
+            return {
+                msg: 'Good morning'
+            }
+        },
+        //传递的子组件数据，需要先接收，插入模板，和在标签中绑定属性三个步骤
+        template: '<h2>{{msg+" "+pmsg}}</h2>'
+    })
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            pmsg: 'hello'
+        }
+    })
+</script>
+
+</html>
