@@ -10,12 +10,14 @@
 
 <body>
     <div id="app">
+        <button @click="handle">销毁事件</button>
         <test-tom></test-tom>
         <test-jerry></test-jerry>
     </div>
 </body>
 <script>
     var eventHub = new Vue()
+
     Vue.component('test-tom', {
         data() {
             return {
@@ -68,6 +70,12 @@
         el: '#app',
         data: {
 
+        },
+        methods: {
+            handle() {
+                eventHub.$off('tom-event')
+                eventHub.$off('jerry-event')
+            }
         }
     })
 </script>
