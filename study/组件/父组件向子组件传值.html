@@ -10,26 +10,34 @@
 
 <body>
     <div id="app">
-        <menu-item :pmsg="pmsg" get-word="How are you"></menu-item>
+        <!-- 绑定到标签中 -->
+        <!-- 要保持原有数据类型需要进行v-bind绑定，不然都会转换成字符串 -->
+        <menu-item :pmsg="pmsg" get-word="How are you" :pobj="pobj"></menu-item>
     </div>
 </body>
 <script>
     Vue.component('menu-item', {
-        props: ['pmsg', 'getWord'],
+        //接收传值
+        props: ['pmsg', 'getWord', 'pobj'],
         data() {
             return {
                 msg: 'Good morning'
             }
         },
-        //传递的子组件数据，需要先接收，插入模板，和在标签中绑定属性三个步骤
+        //传递的子组件数据，需要先在标签中绑定属性,然后接收，插入模板三个步骤
         //命名规则：在命名，接收，插入模板中命名可以使用驼峰命名，在正式dom操作的HTML标签因为对大小写不敏感的关系不能使用
         //或者都使用小写
-        template: '<h2>{{msg+" "+pmsg+" "+getWord}}</h2>'
+        template: '<h2>{{msg+" "+pmsg+" "+getWord+" "+pobj.name}}</h2>'
     })
     const vm = new Vue({
         el: '#app',
         data: {
-            pmsg: 'hello'
+            pmsg: 'hello',
+            pobj: {
+                name: 'dengyu',
+                age: 18
+            }
+
         }
     })
 </script>
