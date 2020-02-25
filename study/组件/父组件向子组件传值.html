@@ -10,19 +10,21 @@
 
 <body>
     <div id="app">
-        <menu-item :pmsg="pmsg"></menu-item>
+        <menu-item :pmsg="pmsg" get-word="How are you"></menu-item>
     </div>
 </body>
 <script>
     Vue.component('menu-item', {
-        props: ['pmsg'],
+        props: ['pmsg', 'getWord'],
         data() {
             return {
                 msg: 'Good morning'
             }
         },
         //传递的子组件数据，需要先接收，插入模板，和在标签中绑定属性三个步骤
-        template: '<h2>{{msg+" "+pmsg}}</h2>'
+        //命名规则：在命名，接收，插入模板中命名可以使用驼峰命名，在正式dom操作的HTML标签因为对大小写不敏感的关系不能使用
+        //或者都使用小写
+        template: '<h2>{{msg+" "+pmsg+" "+getWord}}</h2>'
     })
     const vm = new Vue({
         el: '#app',
