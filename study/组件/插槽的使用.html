@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <base-layout>
+            <!-- 不适用temlate标签定位，在单一html标签中指定name，只能定位一个标签 -->
+            <template slot="header">
+            <p>标题信息</p>
+            <p>标题信息</p>
+        </template>
+            <p>主要内容</p>
+            <p>主要内容</p>
+            <p>主要内容</p>
+            <template slot="footer">
+                <p>底部内容</p>
+                <p>底部内容</p>
+                <p>底部内容</p>
+            </template>
+        </base-layout>
+    </div>
+</body>
+<script>
+    Vue.component('base-layout', {
+        data() {
+            return {
+
+            }
+        },
+        template: `
+            <div>
+                <header>
+                    <slot name="header"></slot>
+                </header>
+                <main>
+                <slot></slot>
+                </main>
+                <footer>
+                <slot name="footer"></slot>
+                </footer>
+            </div>
+        `
+    })
+    const vm = new Vue({
+        el: '#app',
+        data: {
+
+        }
+    })
+</script>
+
+</html>
