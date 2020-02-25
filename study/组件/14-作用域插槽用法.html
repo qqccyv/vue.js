@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<style type="text/css">
+    .current {
+        color: orange;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <fruit-list :list="list">
+            <template slot-scope="slotProps">
+              <!-- 在没有id记录的情况下，可直接记录当前节点的地址做对比 -->
+            <strong  :class="slotProps.info==currentItem? 'current':''" @click="handle(slotProps.info)">{{slotProps.info.name}}</strong>
+          </template>
+        </fruit-list>
+    </div>
+    <script type="text/javascript" src="../js/vue.js"></script>
+    <script type="text/javascript">
+        /*
+                                                                                      作用域插槽
+                                                                                    */
+        Vue.component('fruit-list', {
+            props: ['list'],
+            template: `
+        <ul>
+        <li v-for="item in list" :key="item.id">
+          <slot :info="item">{{item.name}}</slot>
+        </li>
+        </ul>
+      `
+        });
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                // currentIndex: '',
+                currentItem: null,
+                list: [{
+                    id: 1,
+                    name: 'apple'
+                }, {
+                    id: 2,
+                    name: 'orange'
+                }, {
+                    id: 3,
+                    name: 'banana'
+                }]
+            },
+            methods: {
+                handle(item) {
+                    this.currentItem = item
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>
