@@ -9,24 +9,26 @@
 <body>
     <div id="app">
         <div :style='{fontSize: fontSize + "px"}'>{{pmsg}}</div>
-        <!-- 监听子组件中enlarge-text事件，触发父组件中的handle方法 -->
-        <menu-item :parr='parr' @enlarge-text='handle'></menu-item>
+        <!--父组件 监听子组件中enlarge-text事件，触发父组件中的handle方法 -->
+        <!-- 参数由$event固定表示 -->
+        <menu-item :parr='parr' @enlarge-text='handle($event)'></menu-item>
     </div>
-    <script type="text/javascript" src="js/vue.js"></script>
+    <script type="text/javascript" src="../js/vue.js"></script>
     <script type="text/javascript">
         /*
-              子组件向父组件传值-基本用法
-              props传递数据原则：单向数据流
-            */
+                                              子组件向父组件传值-基本用法
+                                              props传递数据原则：单向数据流
+                                            */
 
         Vue.component('menu-item', {
             props: ['parr'],
+            //向父组件中传递参数，直接在自定义事件后面添加
             template: `
         <div>
           <ul>
             <li :key='index' v-for='(item,index) in parr'>{{item}}</li>
-          </ul>
-          <button @click='$emit(enlarge-text)'>扩大父组件中字体大小</button>
+          </ul>    
+          <button @click='$emit("enlarge-text",10)'>扩大父组件中字体大小</button>
         </div>
       `
         });
@@ -38,9 +40,9 @@
                 fontSize: 10
             },
             methods: {
-                handle: function() {
+                handle: function(val) {
                     // 扩大字体大小
-                    this.fontSize += 5;
+                    this.fontSize += val;
                 }
             }
         });
