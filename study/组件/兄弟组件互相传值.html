@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <test-tom></test-tom>
+        <test-jerry></test-jerry>
+    </div>
+</body>
+<script>
+    var eventHub = new Vue()
+    Vue.component('test-tom', {
+        data() {
+            return {
+                num: 0
+            }
+        },
+        template: `
+        <div>
+            <h3>Tom{{num}}</h3>
+            <button @click="handle">点击</button>
+            </div>
+        `,
+        methods: {
+            // tom按钮点击时，触发事件中心的jerry事件，并传递参数
+            handle() {
+                eventHub.$emit('jerry-event', 1)
+            }
+        },
+        mounted() {
+            //在装载时，事件中心监听tom事件，触发函数，箭头函数定位this，改变tom子组件的数据
+            eventHub.$on('tom-event', (val) => {
+                this.num += val
+            })
+        },
+    })
+    Vue.component('test-jerry', {
+        data() {
+            return {
+                num: 0
+            }
+        },
+        template: `
+        <div>
+            <h3>Jerry{{num}}</h3>
+            <button @click="handle">点击</button>
+            </div>
+        `,
+        methods: {
+            handle() {
+                eventHub.$emit('tom-event', 2)
+            }
+        },
+        mounted() {
+            eventHub.$on('jerry-event', (val) => {
+                this.num += val
+            })
+        },
+    })
+    const vm = new Vue({
+        el: '#app',
+        data: {
+
+        }
+    })
+</script>
+
+</html>
