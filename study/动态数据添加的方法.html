@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div @click="handle">
+            {{list}}
+        </div>
+    </div>
+</body>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            list: [1, 2]
+        },
+        methods: {
+            handle() {
+                // let that = this
+                // this.list[2] = Math.random()
+                // this.list.push(Math.random())
+                setTimeout(() => {
+                    this.list = [...this.list]
+                    this.list[2] = Math.random()
+                        // this.list.push(Math.random())
+
+                }, 1000)
+            }
+        },
+    })
+</script>
+
+</html>
