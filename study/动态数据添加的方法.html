@@ -23,13 +23,11 @@
         },
         methods: {
             handle() {
-                // let that = this
-                // this.list[2] = Math.random()
-                // this.list.push(Math.random())
+                // this.list = [...this.list]
+                // this.list[2] = Math.random()  //这里就可以通过数组下标，实时响应修改数组数据了
                 setTimeout(() => {
-                    this.list = [...this.list]
+                    this.list = [...this.list] //如果有异步请求 则必须把深拷贝步骤放在一个作用域内，不然会有问题
                     this.list[2] = Math.random()
-                        // this.list.push(Math.random())
 
                 }, 1000)
             }
