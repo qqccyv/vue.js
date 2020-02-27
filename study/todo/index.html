@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!---   2CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+
+
+
+
+
+
+
+    <div id="todoapp">
+        <todo-server></todo-server>
+    </div>
+    <script src="../js/vue.js"></script>
+    <script>
+        var TodoFooter = {
+            props: ['todos'],
+            template: `
+            <footer class="footer">
+                <span class="todo-count">
+                    <strong>2</strong> item left</span>
+                <ul class="filters">
+                    <li><a href="#/" class="selected">All</a></li>
+                    <li><a href="#/active">Active</a></li>
+                    <li><a href="#/completed">Completed</a></li>
+                </ul>
+                <button class="clear-completed">Clear completed</button>
+            </footer>
+            `
+        }
+        var TodoMain = {
+            props: ['todos'],
+            template: `
+            <section class="main">
+                <input id="toggle-all" type="checkbox" class="toggle-all">
+                <label for="toggle-all">Mark all as complete</label>
+                <ul class="todo-list">
+                    <li :class="{completed: item.completed}" v-for="item in todos" :key="item.id">
+                        <div class="view">
+                            <input type="checkbox" class="toggle">
+                            <label>{{item.title}}</label>
+                            <button class="destroy" @click="deleteTodo(item.id)">
+                            </button></div>
+                        <input class="edit">
+                    </li>
+                </ul>
+            </section>
+            `,
+            methods: {
+                deleteTodo(id) {
+                    this.$emit('change-todo', {
+                        id: id,
+                        type: 'delete'
+                    })
+                }
+            }
+        }
+        var TodoHeader = {
+            template: `
+            <header class="header">
+                <h1>todos</h1>
+                <input placeholder="What needs to be done?" class="new-todo" @keyup.enter="addTodo($event)">
+            </header>
+            `,
+            methods: {
+                addTodo(event) {
+                    this.$emit('add-todo', event.target.value)
+                    event.target.value = ''
+                }
+            },
+        }
+        Vue.component('todo-server', {
+            data() {
+                return {
+                    todos: [{
+                        id: 1,
+                        title: '吃饭',
+                        completed: false
+                    }, {
+                        id: 2,
+                        title: '睡觉',
+                        completed: false
+                    }, {
+                        id: 3,
+                        title: '打豆豆',
+                        completed: true
+                    }]
+                }
+            },
+            template: `
+            <section id="todoapp" class="todoapp">
+                <todo-header @add-todo="add($event)"></todo-header>
+                <todo-main :todos="todos" @change-todo="changeTodo($event)"></todo-main>
+                <todo-footer :todos="todos"></todo-footer>
+            </section>
+            `,
+            components: {
+                'todo-header': TodoHeader,
+                "todo-main": TodoMain,
+                "todo-footer": TodoFooter
+            },
+            methods: {
+                add(val) {
+                    // console.log(this.todos);
+
+                    this.todos.push({
+                        id: this.todos[this.todos.length - 1].id + 1,
+                        title: val,
+                        completed: false
+                    })
+
+                },
+                changeTodo(val) {
+                    if (val.type == 'delete') {
+                        this.todos = this.todos.filter(item => item.id != val.id)
+                    }
+                }
+            },
+        })
+        var vm = new Vue({
+            el: "#todoapp",
+            data: {
+
+            }
+        })
+    </script>
+</body>
+
+
+</html>
