@@ -19,11 +19,7 @@
             <p>主要内容</p>
             <p>主要内容</p>
             <p>主要内容</p>
-            <template slot="footer">
-                <p>底部内容</p>
-                <p>底部内容</p>
-                <p>底部内容</p>
-            </template>
+            <!-- 设置了默认内容后，就不要设置空白插槽，不然会被空白内容顶替 -->
         </base-layout>
     </div>
 </body>
@@ -43,7 +39,7 @@
                 <slot></slot>
                 </main>
                 <footer>
-                <slot name="footer"></slot>
+                <slot name="footer">这是底部默认内容</slot>
                 </footer>
             </div>
         `
