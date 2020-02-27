@@ -29,7 +29,7 @@
         //或者都使用小写
         template: '<h2>{{msg+" "+pmsg+" "+getWord+" "+pobj.name}}</h2>'
     })
-    const vm = new Vue({
+    let vm = new Vue({
         el: '#app',
         data: {
             pmsg: 'hello',

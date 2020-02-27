@@ -28,7 +28,7 @@
             template: `
             <footer class="footer">
                 <span class="todo-count">
-                    <strong>2</strong> item left</span>
+                    <strong>{{todoCount}}</strong> item left</span>
                 <ul class="filters">
                     <li><a href="#/" class="selected">All</a></li>
                     <li><a href="#/active">Active</a></li>
@@ -36,18 +36,29 @@
                 </ul>
                 <button class="clear-completed">Clear completed</button>
             </footer>
-            `
+            `,
+            computed: {
+                todoCount() {
+                    let undone = this.todos.filter(item => !item.completed)
+                    return undone.length
+                }
+            },
         }
         var TodoMain = {
             props: ['todos'],
+            data() {
+                return {
+                    allFlag: ''
+                }
+            },
             template: `
             <section class="main">
-                <input id="toggle-all" type="checkbox" class="toggle-all">
+                <input id="toggle-all" type="checkbox" class="toggle-all" v-model="allFlag">
                 <label for="toggle-all">Mark all as complete</label>
                 <ul class="todo-list">
                     <li :class="{completed: item.completed}" v-for="item in todos" :key="item.id">
                         <div class="view">
-                            <input type="checkbox" class="toggle">
+                            <input type="checkbox" class="toggle" v-model="item.completed">
                             <label>{{item.title}}</label>
                             <button class="destroy" @click="deleteTodo(item.id)">
                             </button></div>
@@ -63,7 +74,15 @@
                         type: 'delete'
                     })
                 }
-            }
+            },
+            watch: {
+                allFlag() {
+                    this.$emit("change-todo", {
+                        type: 'allFlag',
+                        completed: this.allFlag
+                    })
+                }
+            },
         }
         var TodoHeader = {
             template: `
@@ -123,6 +142,10 @@
                 changeTodo(val) {
                     if (val.type == 'delete') {
                         this.todos = this.todos.filter(item => item.id != val.id)
+                    } else if (val.type == 'allFlag') {
+                        this.todos.forEach(item => {
+                            item.completed = val.completed
+                        });
                     }
                 }
             },
