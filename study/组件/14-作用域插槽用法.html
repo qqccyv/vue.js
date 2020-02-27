@@ -16,15 +16,18 @@
         <fruit-list :list="list">
             <template slot-scope="slotProps">
               <!-- 在没有id记录的情况下，可直接记录当前节点的地址做对比 -->
-            <strong  :class="slotProps.info==currentItem? 'current':''" @click="handle(slotProps.info)">{{slotProps.info.name}}</strong>
+                <p @click="handle(slotProps.info)">
+                    <strong v-if="slotProps.info==currentItem"  class="current" >{{slotProps.info.name}}</strong>
+                    <span v-else>{{slotProps.info.name}}</span>
+                </p>
           </template>
         </fruit-list>
     </div>
     <script type="text/javascript" src="../js/vue.js"></script>
     <script type="text/javascript">
         /*
-                                                                                      作用域插槽
-                                                                                    */
+                                                                                                                              作用域插槽
+                                                                                                                            */
         Vue.component('fruit-list', {
             props: ['list'],
             template: `
