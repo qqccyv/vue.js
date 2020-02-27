@@ -23,18 +23,38 @@
     </div>
     <script src="../js/vue.js"></script>
     <script>
+        Vue.directive('focus', {
+            inserted: function(el) {
+                el.focus()
+            }
+
+        })
+        Vue.directive('updateFocus', {
+            update: function(el, binding) {
+                if (binding.value) {
+                    el.focus();
+                }
+            }
+        })
+        var eventHub = new Vue()
+
         var TodoFooter = {
             props: ['todos'],
+            data() {
+                return {
+                    filterItem: ['All', 'Active', 'Completed'],
+                    currentItem: 'All'
+                }
+            },
             template: `
             <footer class="footer">
                 <span class="todo-count">
                     <strong>{{todoCount}}</strong> item left</span>
                 <ul class="filters">
-                    <li><a href="#/" class="selected">All</a></li>
-                    <li><a href="#/active">Active</a></li>
-                    <li><a href="#/completed">Completed</a></li>
+                    <li><a href="#/" :class="{selected: item==currentItem}" @click.prevent="filter(item)" v-for="item in filterItem">{{item}}</a></li>
+                 
                 </ul>
-                <button class="clear-completed">Clear completed</button>
+                <button class="clear-completed"  @click="deleteTodo">Clear completed</button>
             </footer>
             `,
             computed: {
@@ -43,12 +63,25 @@
                     return undone.length
                 }
             },
+            methods: {
+                filter(val) {
+                    this.currentItem = val
+                    eventHub.$emit('filter-item', val)
+                },
+                deleteTodo() {
+                    this.$emit('change-todo', {
+                        type: 'completed'
+                    })
+                }
+            }
         }
         var TodoMain = {
             props: ['todos'],
             data() {
                 return {
-                    allFlag: ''
+                    allFlag: '',
+                    editItem: {},
+                    filterItem: this.todos
                 }
             },
             template: `
@@ -56,13 +89,13 @@
                 <input id="toggle-all" type="checkbox" class="toggle-all" v-model="allFlag">
                 <label for="toggle-all">Mark all as complete</label>
                 <ul class="todo-list">
-                    <li :class="{completed: item.completed}" v-for="item in todos" :key="item.id">
+                    <li :class="{completed: item.completed,editing: item.id==editItem.id}" v-for="item in filterItem" :key="item.id" >
                         <div class="view">
-                            <input type="checkbox" class="toggle" v-model="item.completed">
-                            <label>{{item.title}}</label>
+                            <input type="checkbox" class="toggle" :checked="item.completed? 'checked':''" @change="changeFlag(item,$event)">
+                            <label @dblclick="changeTodo(item)">{{item.title}}</label>
                             <button class="destroy" @click="deleteTodo(item.id)">
                             </button></div>
-                        <input class="edit">
+                        <input class="edit" v-model="editItem.title" @keyup.enter="changeTodoed" v-updateFocus="item.id==editItem.id">
                     </li>
                 </ul>
             </section>
@@ -73,6 +106,21 @@
                         id: id,
                         type: 'delete'
                     })
+                },
+                changeFlag(val, event) {
+                    this.$emit('change-todo', {
+                        id: val.id,
+                        type: 'change',
+                        completed: event.target.checked,
+                        title: val.title
+                    })
+                },
+                changeTodo(val) {
+                    this.editItem = val
+                },
+                changeTodoed(val) {
+                    this.$emit('change-todo', this.editItem.type = 'change')
+                    this.editItem = ''
                 }
             },
             watch: {
@@ -81,14 +129,32 @@
                         type: 'allFlag',
                         completed: this.allFlag
                     })
+                },
+                todos() {
+                    this.filterItem = this.todos
                 }
+            },
+            mounted() {
+                eventHub.$on('filter-item', (val) => {
+                    if (val == 'All') {
+                        this.filterItem = this.todos
+                    } else if (val == 'Active') {
+                        this.filterItem = this.todos.filter((item) => {
+                            return !item.completed
+                        })
+                    } else if (val == 'Completed') {
+                        this.filterItem = this.todos.filter((item) => {
+                            return item.completed
+                        })
+                    }
+                })
             },
         }
         var TodoHeader = {
             template: `
             <header class="header">
                 <h1>todos</h1>
-                <input placeholder="What needs to be done?" class="new-todo" @keyup.enter="addTodo($event)">
+                <input placeholder="What needs to be done?" class="new-todo" @keyup.enter="addTodo($event)" v-focus>
             </header>
             `,
             methods: {
@@ -120,7 +186,7 @@
             <section id="todoapp" class="todoapp">
                 <todo-header @add-todo="add($event)"></todo-header>
                 <todo-main :todos="todos" @change-todo="changeTodo($event)"></todo-main>
-                <todo-footer :todos="todos"></todo-footer>
+                <todo-footer :todos="todos" @change-todo="changeTodo($event)"></todo-footer>
             </section>
             `,
             components: {
@@ -146,6 +212,20 @@
                         this.todos.forEach(item => {
                             item.completed = val.completed
                         });
+                    } else if (val.type == 'change') {
+                        this.todos.some(item => {
+                            if (item.id == val.id) {
+                                item.completed = val.completed
+                                item.title = val.title
+                            }
+                        })
+                    } else if (val.type == 'completed') {
+                        console.log(this.todos);
+                        this.todos = this.todos.filter((item) => {
+                            return item.completed == false
+                        })
+                        console.log(this.todos);
+
                     }
                 }
             },
