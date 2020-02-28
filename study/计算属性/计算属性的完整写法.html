@@ -23,14 +23,17 @@
             },
             computed: {
                 fullName: {
+                    //获取时调用，相当于数据绑定到页面    也是平时默认调用的
+                    get: function() {
+                        return this.firstName + ' ' + this.lastName
+                    },
+                    //fullName改变时调用，相当于反向绑定回数据
                     set: function(newValue) {
                         let name = newValue.split(' ');
                         this.firstName = name[0]
                         this.lastName = name[1]
                     },
-                    get: function() {
-                        return this.firstName + ' ' + this.lastName
-                    }
+
                 }
             }
         })
