@@ -13,20 +13,20 @@
 </body>
 <script>
     const vm = new Vue({
-        el: '#app',
-        data: {
-            arr: [1, 2, 3, 4],
-            arrLength: this.arrLen
-        },
-        computed: {
-            arrLen: {
-                get: function() {
-                    return this.arr.length
+            el: '#app',
+            data: {
+                arr: [1, 2, 3, 4],
+                arrLength: this.arrLen
+            },
+            computed: {
+                arrLen: {
+                    get: function() {
+                        return this.arr.length
+                    }
                 }
-            }
-        },
-    })
-    console.log(vm.arr.length);
+            },
+        })
+        // console.log(vm.arr.length);
 </script>
 
 </html>

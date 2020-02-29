@@ -43,7 +43,9 @@
             data() {
                 return {
                     filterItem: ['All', 'Active', 'Completed'],
-                    currentItem: 'All'
+                    currentItem: 'All',
+                    todoCount: this.todos.length
+
                 }
             },
             template: `
@@ -58,10 +60,10 @@
             </footer>
             `,
             computed: {
-                todoCount() {
-                    let undone = this.todos.filter(item => !item.completed)
-                    return undone.length
-                }
+                // todoCount() {
+                //     let undone = this.todos.filter(item => !item.completed)
+                //     return undone.length
+                // }
             },
             methods: {
                 filter(val) {
@@ -72,7 +74,12 @@
                     this.$emit('change-todo', {
                         type: 'completed'
                     })
-                }
+                },
+            },
+            mounted() {
+                eventHub.$on('change-itemnum', (val) => {
+                    this.todoCount = val
+                })
             }
         }
         var TodoMain = {
@@ -132,6 +139,9 @@
                 },
                 todos() {
                     this.filterItem = this.todos
+                },
+                filterItem() {
+                    eventHub.$emit('change-itemnum', this.filterItem.length)
                 }
             },
             mounted() {
