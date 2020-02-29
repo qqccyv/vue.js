@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    // var paramsString = "q=URLUtils.searchParams&topic=api"
+    var searchParams = new URLSearchParams(); //这里一般是接收字符串或json对象
+    searchParams.append('name', '邓宇')
+    searchParams.append('age', '18')
+        // console.log(searchParams.values);
+        // console.log(searchParams.keys);
+
+    for (let p of searchParams) {
+        console.log(p);
+    }
+
+    var form = new FormData() //这里一般会接收dom元素中的表单
+    form.append('name', '邓宇')
+    form.append('age', '11')
+    for (let p of form) {
+        console.log(p);
+    }
+</script>
+
+</html>
