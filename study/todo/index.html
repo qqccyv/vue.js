@@ -115,6 +115,7 @@
                     })
                 },
                 changeFlag(val, event) {
+                    // eventHub.$emit('change-itemnum', this.filterItem.length)
                     this.$emit('change-todo', {
                         id: val.id,
                         type: 'change',
