@@ -10,6 +10,10 @@ Vue.use(ElementUI);
 import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 
+import Axios from 'axios'
+Axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
+Vue.prototype.$http = Axios
+
 Vue.config.productionTip = false
 
 new Vue({
