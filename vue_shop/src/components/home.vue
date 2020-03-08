@@ -8,21 +8,24 @@
     <el-button type="primary" @click="loginOut">退出</el-button>
     </el-header>
   <el-container>
-    <el-aside width="200px">
-        <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-        <el-submenu index="1">
+    <el-aside :width="isCollapse? '64px':'200px'">
+      <div class="toggle-button" @click="toggleCollapse">|||</div>
+        <el-menu background-color="#333744" text-color="#fff" active-text-color="#409EFF" unique-opened :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
+        <el-submenu :index="'/'+item.path" v-for="item in menuList" :key="item.id" unique-opened>
           <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>导航一</span>
+            <i :class="iconsObj[item.id]"></i>
+            <span>{{item.authName}}</span>
           </template>
-            <el-menu-item index="1-1">
-                <i class="el-icon-location"></i>
-                <span>导航一</span>
+            <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id" @click="saveActive('/' + subItem.path)">
+                <i class="el-icon-menu"></i>
+                <span>{{subItem.authName}}</span>
             </el-menu-item>
         </el-submenu>
       </el-menu>
     </el-aside>
-    <el-main>Main</el-main>
+    <el-main>
+      <router-view></router-view>
+    </el-main>
   </el-container>
 </el-container>
 
@@ -31,10 +34,46 @@
 
 <script>
 export default {
+  created() {
+    this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
+  },
+  data() {
+    return {
+      activePath: '',
+      isCollapse: false,
+      menuList: [],
+       iconsObj: {
+        '125': 'iconfont icon-user',
+        '103': 'iconfont icon-tijikongjian',
+        '101': 'iconfont icon-shangpin',
+        '102': 'iconfont icon-danju',
+        '145': 'iconfont icon-baobiao'
+      },
+    }
+  },
   methods: {
     loginOut(){
       window.sessionStorage.clear()
-      this.$router.push('/login')
+      this.$router.push('login')
+    },
+   async getMenuList(){
+     const {data: res} = await this.$http.get('/menus')
+      if(res.meta.status != 200){
+        return this.$message({
+          message: res.meta.message,
+          type: 'error',
+          showClose: true,
+        });    
+      }
+      this.menuList = res.data
+    },
+    toggleCollapse(){
+      this.isCollapse = !this.isCollapse
+    },
+    saveActive(activePath){
+      window.sessionStorage.setItem('activePath',activePath) //将当前路径保存在sessionStorage中，保证刷新后依然为当前选项
+      this.activePath = activePath
     }
   },
 }
