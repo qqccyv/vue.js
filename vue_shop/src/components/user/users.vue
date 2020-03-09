@@ -1,11 +1,12 @@
 <template>
   <div>
+    <!-- 面包屑导航 -->
     <el-breadcrumb separator=">">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
-    <el-card class="box-card">
+    <el-card>
       <!-- 搜索和添加用户 -->
       <el-row :gutter="20">
         <el-col :span="7">
@@ -273,15 +274,13 @@ export default {
     },
     //删除用户
    async deleteUser(id){
-          console.log(id);
-          
+     //删除确认
     let result = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).catch(err=>err)
         if(result != 'confirm') return
-
     let {data: res} =await  this.$http.delete('/users/'+id)
     console.log(res);
     if(res.meta.status !=200) return this.$message({
@@ -295,8 +294,6 @@ export default {
       showClose: true,
     });
     this.getUsersList()
-    
-    
     }
   },
   mounted() { 
