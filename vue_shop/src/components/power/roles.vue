@@ -94,7 +94,7 @@ export default {
         showClose: true,
       });
       this.rolesList = res.data
-      console.log(this.rolesList);
+      // console.log(this.rolesList);
       
     },
     async deleteRights(role, id) {
@@ -132,8 +132,10 @@ export default {
       showClose: true,
     });
       this.rightsList = res.data
+      
       //利用递归获取当前角色的三级权限id
       this.queryRights(role,this.defaultRightsList)
+      console.log(this.defaultRightsList);
       this.allotDialogVisible = true
     },
     //定义获取三级权限的递归函数
@@ -147,8 +149,10 @@ export default {
     },
     //提交权限编辑信息
     async allotRights(){
-      let keysId = [...this.$refs.allotDialogRef.getCheckedKeys(),...this.$refs.allotDialogRef.getHalfCheckedNodes()]
+      let keysId = [...this.$refs.allotDialogRef.getCheckedKeys(),...this.$refs.allotDialogRef.getHalfCheckedKeys()]
       let allotDialogStr = keysId.join(',')
+      console.log(allotDialogStr);
+      
      let {data:res}= await this.$http.post(`/roles/${this.currentRoleId}/rights`,{
        rids: allotDialogStr
      })
@@ -157,13 +161,14 @@ export default {
        type: 'error',
        showClose: true,
      });
+          this.getRolesList()
+     this.allotDialogVisible = false
      this.$message({
        message: res.meta.msg,
        type: 'success',
        showClose: true,
      });
-     this.getRolesList()
-     this.allotDialogVisible = false
+
     },
     //重置默认权限选项
     resetRights(){
