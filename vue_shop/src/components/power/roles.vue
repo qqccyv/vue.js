@@ -54,12 +54,12 @@
       </el-table>
     </el-card>
         <!-- 分配权限弹出框 -->
-    <el-dialog title="分配权限" :visible.sync="allotDialogVisible" width="50%">
+    <el-dialog title="分配权限" :visible.sync="allotDialogVisible" width="50%" @close="resetRights" >
       <!-- 树状图 -->
-      <el-tree :data="rightsList" :props="defaultProps" show-checkbox default-expand-all node-key="id" :default-checked-keys='defaultRightsList'></el-tree>
+      <el-tree ref="allotDialogRef" :data="rightsList" :props="defaultProps" show-checkbox default-expand-all node-key="id" :default-checked-keys='defaultRightsList'></el-tree>
       <span slot="footer">
         <el-button @click="allotDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="allotDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="allotRights">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -73,6 +73,7 @@ export default {
       rightsList: [],
       defaultRightsList: [],
       allotDialogVisible: false,
+      currentRoleId:'',
       // 树状图，props选项可以接受一个对象，节点标题，和目标对象作为层级属性的名称
       defaultProps: {
         label:'authName',
@@ -121,6 +122,8 @@ export default {
     },
     // 显示分配权限弹出框
     async showAllotDialog(role){
+      //保存当前编辑角色的id
+      this.currentRoleId = role.id
       // 获取角色的所有权限列表，并展示出来！！不只是当前角色的
     let {data: res} = await this.$http.get('/rights/tree')
     if(res.meta.status !=200) return this.$message({
@@ -141,6 +144,30 @@ export default {
       data.children.forEach(item=>{
         this.queryRights(item,arr)
       })
+    },
+    //提交权限编辑信息
+    async allotRights(){
+      let keysId = [...this.$refs.allotDialogRef.getCheckedKeys(),...this.$refs.allotDialogRef.getHalfCheckedNodes()]
+      let allotDialogStr = keysId.join(',')
+     let {data:res}= await this.$http.post(`/roles/${this.currentRoleId}/rights`,{
+       rids: allotDialogStr
+     })
+     if(res.meta.status !=200) return this.$message({
+       message: res.meta.msg,
+       type: 'error',
+       showClose: true,
+     });
+     this.$message({
+       message: res.meta.msg,
+       type: 'success',
+       showClose: true,
+     });
+     this.getRolesList()
+     this.allotDialogVisible = false
+    },
+    //重置默认权限选项
+    resetRights(){
+      this.defaultRightsList = []
     }
   },
 }
