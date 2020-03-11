@@ -13,7 +13,7 @@
           <el-button type="success">添加商品分类</el-button>
         </el-col>
       </el-row>
-      <tree-table :data="catesList" :columns="columns" border :show-index="true" :selection-type="false" :expand-type="false">
+      <tree-table class="treeTable" :data="catesList" :columns="columns" border :show-index="true" :selection-type="false" :expand-type="false">
         <!-- 自定义模板 -->
         <!-- 是否有效 -->
         <template slot-scope="scope" slot="isOk">
@@ -109,4 +109,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.treeTable {
+  margin-top: 15px;
+}
 </style>
