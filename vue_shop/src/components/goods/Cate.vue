@@ -10,7 +10,7 @@
       <!-- 添加分类 -->
       <el-row>
         <el-col>
-          <el-button type="success">添加商品分类</el-button>
+          <el-button type="success" @click="showGoodsDialog">添加商品分类</el-button>
         </el-col>
       </el-row>
       <tree-table class="treeTable" :data="catesList" :columns="columns" border :show-index="true" :selection-type="false" :expand-type="false">
@@ -36,6 +36,18 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryCates.pagenum" :page-sizes="[3, 5, 10, 15]" :page-size="queryCates.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </el-card>
+    <!-- 添加商品分类表单 -->
+    <el-dialog title="添加商品分类" :visible.sync="goodsDialogVisible" width="50%">
+      <el-form label-width="100px" :model="goodsForm" :rules="goodsFormRules" ref="goodsFormRef">
+        <el-form-item label="分类名称" prop="cat_name" >
+          <el-input v-model="goodsForm.cat_name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="goodsDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="goodsDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -70,7 +82,16 @@ export default {
           type: 'template',
           template: 'handle'
         },
-      ]
+      ],
+      goodsDialogVisible: false,
+      goodsForm:{
+        cat_name: '',
+      },
+      goodsFormRules:{
+         cat_name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+          ],
+      }
     }
   },
   created() {
@@ -103,6 +124,10 @@ export default {
     handleCurrentChange(newPage) {
       this.queryCates.pagenum = newPage
       this.getCatesList()
+    },
+    //显示商品分类表单
+    showGoodsDialog() {
+      this.goodsDialogVisible = true
     }
   },
 }
