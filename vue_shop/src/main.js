@@ -11,8 +11,10 @@ import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 
 import Axios from 'axios'
+//引入树形表格插件，并注册为全局组件
+import ZkTable from 'vue-table-with-tree-grid'
 
-
+Vue.component('tree-table', ZkTable)
 
 Axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 Axios.interceptors.request.use(config => {
