@@ -34,15 +34,15 @@
         <!-- 操作栏 -->
         <el-table-column label="操作" width="180px">
           <template slot-scope="userData">
-            <el-tooltip effect="dark" content="编辑" placement="top" :enterable="false" >
-            <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(userData.row.id)"></el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="删除" placement="top" :enterable="false">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteUser(userData.row.id)"></el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
-            <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
-          </el-tooltip>
+            <el-tooltip effect="dark" content="编辑" placement="top" :enterable="false">
+              <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(userData.row.id)"></el-button>
+            </el-tooltip>
+            <el-tooltip effect="dark" content="删除" placement="top" :enterable="false">
+              <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteUser(userData.row.id)"></el-button>
+            </el-tooltip>
+            <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
+              <el-button type="warning" icon="el-icon-setting" size="mini" @click="showDialogVisible(userData.row)"></el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -50,10 +50,10 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryUsers.pagenum" :page-sizes="[1, 2, 5, 10]" :page-size="queryUsers.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </el-card>
-    <!-- 添加用户表单 -->
+    <!-- 添加用户弹出表单 -->
     <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" @close="resetAddForm">
       <!-- 表单区域 -->
-       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
+      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="addForm.username"></el-input>
         </el-form-item>
@@ -75,8 +75,8 @@
     <!-- 编辑用户表单 -->
     <el-dialog title="编辑用户" :visible.sync="editDialogVisible" width="50%" @close="resetEditForm">
       <!-- 表单区域 -->
-       <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
-        <el-form-item label="用户名" >
+      <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
+        <el-form-item label="用户名">
           <el-input v-model="editForm.username" disabled></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
@@ -91,28 +91,44 @@
         <el-button type="primary" @click="editUser">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 分配角色表单 -->
+    <el-dialog title="分配角色" :visible.sync="setDialogVisible" width="50%" @close="resetSetForm">
+      <!-- 表单区域 -->
+      <p>用户名：{{currentRole.username}}</p>
+      <p>当前角色：{{currentRole.role_name}}</p>
+      <p>请选择角色：
+        <el-select v-model="currentRoleId" placeholder="请选择">
+          <el-option v-for="item in rolesList" :key="item.id" :label="item.roleName" :value="item.id">
+          </el-option>
+        </el-select>
+      </p>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setRole">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
- //自定义表单验证规则
+  //自定义表单验证规则
   data() {
-     var checkEmail = (rule,value,cb)=>{
-        const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
-        if(regEmail.test(value)){
-          return cb()
-        }
+    var checkEmail = (rule, value, cb) => {
+      const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+      if (regEmail.test(value)) {
+        return cb()
+      }
       cb(new Error('请输入合法的邮箱地址'))
-  }
-  var checkMobile = (rule,value,cb)=>{
+    }
+    var checkMobile = (rule, value, cb) => {
       const regMobile = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/
       if (regMobile.test(value)) {
         return cb()
       }
 
       cb(new Error('请输入合法的手机号'))
-  }
+    }
     return {
       queryUsers: {
         query: "",
@@ -129,12 +145,16 @@ export default {
         mobile: ''
       },
       editDialogVisible: false,
-      editForm:{
-         username: '',
+      editForm: {
+        username: '',
         email: '',
         mobile: '',
         id: ''
       },
+      setDialogVisible: false,
+      currentRole: {},
+      currentRoleId: '',
+      rolesList: [],
       // 添加用户表单验证规则
       addFormRules: {
         username: [
@@ -165,8 +185,8 @@ export default {
         ]
       },
       //编辑用户表单验证规则
-      editFormRules:{
-         email: [
+      editFormRules: {
+        email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
           { validator: checkEmail, trigger: 'blur' }
         ],
@@ -189,7 +209,7 @@ export default {
       if (res.meta.status != 200) {
         return this.$message.error("获取用户列表失败！");
       }
-      
+
       this.usersList = res.data.users;
       this.total = res.data.total;
       // console.log(res);
@@ -224,41 +244,67 @@ export default {
     },
     //重置表单验证状态
     //多个重置函数不能放一起，不然会报错，应该是没有激活的表单会not found
-    resetAddForm(){
+    resetAddForm() {
       this.$refs.addFormRef.resetFields()
     },
-    resetEditForm(){
+    resetEditForm() {
       this.$refs.editFormRef.resetFields()
     },
     //添加用户信息
-    addUser(){
-       this.$refs.addFormRef.validate(async valid=>{
-         if(!valid) return  this.$message.error('输入的信息不符合规则')
-        let {data:res}= await this.$http.post('/users',this.addForm)
-        if(res.meta.status != 201){
+    addUser() {
+      this.$refs.addFormRef.validate(async valid => {
+        if (!valid) return this.$message.error('输入的信息不符合规则')
+        let { data: res } = await this.$http.post('/users', this.addForm)
+        if (res.meta.status != 201) {
           return this.$message.error('用户添加失败')
         }
         this.$message.success('用户添加成功')
         this.addDialogVisible = false
         this.getUsersList()
-       })
+      })
     },
     //显示用户信息编辑表单
-    async showEditDialog(id){
+    async showEditDialog(id) {
       this.editDialogVisible = true
-      const {data:res} = await this.$http.get('/users/'+id)
+      const { data: res } = await this.$http.get('/users/' + id)
       // console.log(res);
-      if(res.meta.status != 200) return
+      if (res.meta.status != 200) return
       this.editForm = res.data
-      
+
     },
     //编辑用户信息
-    editUser(){
-      this.$refs.editFormRef.validate(async valid=>{
-        if(!valid) return
-      const {data: res} =  await this.$http.put('/users/'+this.editForm.id,this.editForm)
-      if(res.meta.status != 200) return this.$message({
-        message: '用户信息更新失败',
+    editUser() {
+      this.$refs.editFormRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.put('/users/' + this.editForm.id, this.editForm)
+        if (res.meta.status != 200) return this.$message({
+          message: '用户信息更新失败',
+          type: 'error',
+          showClose: true,
+        });
+        this.$message({
+          message: res.meta.msg,
+          type: 'success',
+          showClose: true,
+        });
+        this.editDialogVisible = false
+        this.getUsersList()
+
+      })
+    },
+    //删除用户
+    async deleteUser(id) {
+      //删除确认
+      let result = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (result != 'confirm') return
+      let { data: res } = await this.$http.delete('/users/' + id)
+      console.log(res);
+      if (res.meta.status != 200) return this.$message({
+        message: '删除失败',
         type: 'error',
         showClose: true,
       });
@@ -267,37 +313,48 @@ export default {
         type: 'success',
         showClose: true,
       });
-      this.editDialogVisible = false
       this.getUsersList()
-      
-      })
     },
-    //删除用户
-   async deleteUser(id){
-     //删除确认
-    let result = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).catch(err=>err)
-        if(result != 'confirm') return
-    let {data: res} =await  this.$http.delete('/users/'+id)
-    console.log(res);
-    if(res.meta.status !=200) return this.$message({
-      message: '删除失败',
-      type: 'error',
-      showClose: true,
-    });
-    this.$message({
-      message: res.meta.msg,
-      type: 'success',
-      showClose: true,
-    });
-    this.getUsersList()
+    //显示分配角色表单
+    async showDialogVisible(role) {
+      // console.log(role);
+      this.currentRole = role
+      const { data: res } = await this.$http.get('/roles')
+      if (res.meta.status != 200) return this.$message({
+        message: res.meta.msg,
+        type: 'error',
+        showClose: true,
+      });
+      //没有超级管理员，超级管理员不允许被设置
+      this.rolesList = res.data
+      this.setDialogVisible = true
+    },
+    //分配角色
+   async setRole() {
+    const {data:res}= await this.$http.put(`users/${this.currentRole.id}/role`,{
+        rid: this.currentRoleId
+      })
+      if(res.meta.status !=200) return this.$message({
+        message: res.meta.msg,
+        type: 'error',
+        showClose: true,
+      });
+      this.$message({
+        message: res.meta.msg,
+        type: 'success',
+        showClose: true,
+      });
+      this.getUsersList()
+      this.setDialogVisible = false
+    },
+    //重置分配角色表单
+    resetSetForm() {
+      this.currentRoleId = ''
+      this.currentRole = {}
     }
   },
-  mounted() { 
-    
+  mounted() {
+
   }
 };
 </script>
