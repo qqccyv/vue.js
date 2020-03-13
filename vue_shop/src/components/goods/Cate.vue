@@ -37,15 +37,18 @@
       </el-pagination>
     </el-card>
     <!-- 添加商品分类表单 -->
-    <el-dialog title="添加商品分类" :visible.sync="goodsDialogVisible" width="50%">
-      <el-form label-width="100px" :model="goodsForm" :rules="goodsFormRules" ref="goodsFormRef">
-        <el-form-item label="分类名称" prop="cat_name" >
-          <el-input v-model="goodsForm.cat_name"></el-input>
+    <el-dialog title="添加商品分类" :visible.sync="categoriesDialogVisible" width="50%" @close="resetCategoriesForm">
+      <el-form label-width="100px" :model="categoriesForm" :rules="categoriesFormRules" ref="categoriesFormRef" >
+        <el-form-item label="分类名称" prop="cat_name">
+          <el-input v-model="categoriesForm.cat_name"></el-input>
+        </el-form-item>
+        <el-form-item label="父级分类">
+          <el-cascader v-model="categoriesId" :options="parentCatesList" :props="parentCatesProps" @change="categoriesChange" style="width: 100%" clearable></el-cascader>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="goodsDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="goodsDialogVisible = false">确 定</el-button>
+        <el-button @click="categoriesDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addCategory">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -83,14 +86,26 @@ export default {
           template: 'handle'
         },
       ],
-      goodsDialogVisible: false,
-      goodsForm:{
+      categoriesDialogVisible: false,
+      categoriesForm: {
         cat_name: '',
+        cat_pid: 0,
+        cat_level: 0
       },
-      goodsFormRules:{
-         cat_name: [
-            { required: true, message: '请输入活动名称', trigger: 'blur' },
-          ],
+      //选择的分类id
+      categoriesId: [],
+      parentCatesList: [],
+      parentCatesProps:{
+         expandTrigger: 'hover',
+          label: 'cat_name',
+          value: 'cat_id',
+          children: 'children',
+           checkStrictly: true
+      },
+      categoriesFormRules: {
+        cat_name: [
+          { required: true, message: '请输入分类名称', trigger: 'blur' },
+        ],
       }
     }
   },
@@ -110,7 +125,7 @@ export default {
         });
 
       }
-      console.log(res);
+      // console.log(res);
       this.total = res.data.total
       this.catesList = res.data.result
 
@@ -127,7 +142,53 @@ export default {
     },
     //显示商品分类表单
     showGoodsDialog() {
-      this.goodsDialogVisible = true
+     this.getParentCatesList()
+      this.categoriesDialogVisible = true
+    },
+    //查询父级分类列表
+   async getParentCatesList(){
+    const {data:res}= await this.$http.get('/categories',{
+        params: {
+          type: 2
+        }
+      })
+    if(res.meta.status !=200) return this.$message({
+      message: res.meta.msg,
+      type: 'error',
+      showClose: true,
+    });
+    console.log(res);
+    this.parentCatesList = res.data
+    
+    
+    },
+    //父级分类变更后
+    categoriesChange(){
+      console.log(this.categoriesId);
+      if(this.categoriesId.length>0){
+        this.categoriesForm.cat_pid = this.categoriesId[this.categoriesId.length-1]
+        this.categoriesForm.cat_level = this.categoriesId.length
+        return  
+      }
+      this.categoriesForm.cat_pid = 0
+      this.categoriesForm.cat_level = 0
+    },
+    //重置resetCategoriesForm表单
+    resetCategoriesForm(){
+      this.$refs.categoriesFormRef.resetFields()
+      this.categoriesId = []
+       this.categoriesForm.cat_pid = 0
+      this.categoriesForm.cat_level = 0
+
+    },
+    //提交新增分类信息
+   async addCategory(){
+      console.log(this.categoriesForm);
+    const {data:res}= await this.$http.post('/categories',this.categoriesForm)
+      if(res.meta.status !=201) return this.$message.error('添加分类失败')
+      this.categoriesDialogVisible = false
+      this.getCatesList()
+      this.$message.success('添加分类成功')
     }
   },
 }
