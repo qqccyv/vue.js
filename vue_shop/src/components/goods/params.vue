@@ -180,7 +180,7 @@ export default {
       if (res.meta.status != 200) return this.$message.error('获取分类数据失败')
       //对参数可选项数据进行处理,转换数组和添加单独的单独的标签开关
       // console.log(res.data);
-
+      //需要在给data数据赋值之前处理，不然数据不是响应式的
       res.data.forEach(item => {
         item.attr_vals = item.attr_vals ? item.attr_vals.split(',') : []
         //动态添加参数数据
