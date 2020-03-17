@@ -52,7 +52,7 @@
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="商品图片" name="3">
-            <el-upload  :action="uploadURL" :on-preview="handlePreview" :on-remove="handleRemove"  list-type="picture">
+            <el-upload :action="uploadURL" :on-preview="handlePreview" :on-remove="handleRemove" :on-success="uploadSuccess" list-type="picture" :headers="headersObj">
               <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
           </el-tab-pane>
@@ -60,6 +60,10 @@
         </el-tabs>
       </el-form>
     </el-card>
+    <!-- 图片预览 -->
+    <el-dialog class="previewImg" title="图片预览" :visible.sync="previewVisible" width="50%">
+      <img :src="previewUrl" alt="">
+    </el-dialog>
   </div>
 </template>
 
@@ -75,7 +79,7 @@ export default {
         goods_number: 0,
         goods_weight: 0,
         goods_introduce: '',
-        pics: {},
+        pics: [],
         attrs: []
       },
       //级联分类信息列表
@@ -91,6 +95,12 @@ export default {
       onlyGoodsData: [],
       //图片上传地址
       uploadURL: 'http://127.0.0.1:8888/api/private/v1/upload',
+      headersObj: {
+        Authorization: window.sessionStorage.getItem('token')
+      },
+      //图片预览
+      previewVisible: false,
+      previewUrl: '',
       //表单验证规则
       addGoodsFormRules: {
         goods_name: [
@@ -167,14 +177,27 @@ export default {
       }
 
     },
-    handlePreview(){
+    //图片上传预览
+    handlePreview(file) {
+      this.previewUrl = file.response.data.url
+      this.previewVisible = true
 
     },
-    handleRemove(){
-
+    //删除将要上传的图片
+    handleRemove(file) {
+      const i = this.addGoodsForm.pics.findIndex(item => {
+        return item.pic = file.response.data.tmp_path
+      })
+      // console.log(i);
+      this.addGoodsForm.pics.splice(i, 1)
     },
-    //图片上传
-    uploadImg() {
+    //图片上传成功后
+    uploadSuccess(response) {
+      const picObj = {
+        pic: response.data.tmp_path
+      }
+      this.addGoodsForm.pics.push(picObj)
+      // console.log(this.addGoodsForm.pics);
 
     }
   },
@@ -192,5 +215,8 @@ export default {
 <style lang="less" scoped>
 .el-checkbox {
   margin: 0 15px 0 0 !important;
+}
+.previewImg img{
+  width: 100%;
 }
 </style>
