@@ -18,7 +18,8 @@
       </el-steps>
       <!-- 表单 和 tabs栏 -->
       <el-form :model="addGoodsForm" :rules="addGoodsFormRules" ref="addGoodsFormRef" label-width="100px">
-        <el-tabs v-model="activeIndex" tab-position="left" :before-leave="beforeLeave">
+        <el-tabs v-model="activeIndex" tab-position="left" :before-leave="beforeLeave" @tab-click="tabClick">
+          <!-- 基本信息 -->
           <el-tab-pane label="基本信息" name="0">
             <el-form-item label="商品名称" prop="goods_name">
               <el-input v-model="addGoodsForm.goods_name"></el-input>
@@ -33,12 +34,28 @@
               <el-input v-model="addGoodsForm.goods_number" type="number"></el-input>
             </el-form-item>
             <el-form-item label="商品分类" prop="goods_cat">
-              <el-cascader v-model="addGoodsForm.goods_cat" :options="cateList" :props="cateProps" @change="handleChange" clearable ></el-cascader>
+              <el-cascader v-model="addGoodsForm.goods_cat" :options="cateList" :props="cateProps" @change="handleChange" clearable></el-cascader>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品参数" name="1">商品参数</el-tab-pane>
-          <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
-          <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
+          <!-- 商品分类 -->
+          <el-tab-pane label="商品参数" name="1">
+            <el-form-item :label="item.attr_name" v-for="(item, index) in manyGoodsData" :key="item.attr_id">
+              <el-checkbox-group v-model="item.attr_vals">
+                <el-checkbox :label="item" v-for="(item, index) in item.attr_vals" :key="index" border></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-tab-pane>
+          <!-- 商品属性 -->
+          <el-tab-pane label="商品属性" name="2">
+            <el-form-item :label="item.attr_name" v-for="(item, index) in onlyGoodsData" :key="item.attr_id">
+              <el-input v-model="item.attr_vals"></el-input>
+            </el-form-item>
+          </el-tab-pane>
+          <el-tab-pane label="商品图片" name="3">
+            <el-upload  :action="uploadURL" :on-preview="handlePreview" :on-remove="handleRemove"  list-type="picture">
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+          </el-tab-pane>
           <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
         </el-tabs>
       </el-form>
@@ -61,7 +78,7 @@ export default {
         pics: {},
         attrs: []
       },
-      //分类信息列表
+      //级联分类信息列表
       cateList: [],
       cateProps: {
         expandTrigger: 'hover',
@@ -69,6 +86,12 @@ export default {
         label: 'cat_name',
         children: 'children'
       },
+      //商品参数与，商品属性
+      manyGoodsData: [],
+      onlyGoodsData: [],
+      //图片上传地址
+      uploadURL: 'http://127.0.0.1:8888/api/private/v1/upload',
+      //表单验证规则
       addGoodsFormRules: {
         goods_name: [
           { required: true, message: '请输入商品名称', trigger: 'blur' }
@@ -100,26 +123,74 @@ export default {
       this.cateList = res.data
     },
     //分类选择器触发
-    handleChange(){
+    handleChange() {
       console.log(this.addGoodsForm.goods_cat);
-            if (this.addGoodsForm.goods_cat.length < 3) {
+      if (this.addGoodsForm.goods_cat.length < 3) {
         this.addGoodsForm.goods_cat = []
         return
       }
     },
-    //tab栏切换事件
-    beforeLeave(activeName, oldActiveName){
+    //阻止tab栏切换条件
+    beforeLeave(activeName, oldActiveName) {
       // console.log(activeName);
       // console.log(oldActiveName);
-      if(oldActiveName == 0 && this.addGoodsForm.goods_cat.length < 3){ 
+      if (oldActiveName == 0 && this.addGoodsForm.goods_cat.length < 3) {
         this.$message.error('请选择商品分类')
         return false
-        }
-      
+      }
+
+    },
+    //切换tab栏事件，获取各tab栏数据
+    async tabClick() {
+      // console.log(this);
+      if (this.activeIndex == '1') {
+        // console.log(111);
+        const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, {
+          params: {
+            sel: 'many'
+          }
+        })
+        if (res.meta.status != 200) return this.$message.error('获取数据失败')
+        res.data.forEach(item => {
+          item.attr_vals = item.attr_vals.length == 0 ? [] : item.attr_vals.split(' ')
+        })
+        this.manyGoodsData = res.data
+
+      } else if (this.activeIndex == '2') {
+        const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, {
+          params: {
+            sel: 'only'
+          }
+        })
+        if (res.meta.status != 200) return this.$message.error('获取数据失败')
+        this.onlyGoodsData = res.data
+      }
+
+    },
+    handlePreview(){
+
+    },
+    handleRemove(){
+
+    },
+    //图片上传
+    uploadImg() {
+
     }
-  }
+  },
+  computed: {
+    cateId() {
+      if (this.addGoodsForm.goods_cat.length === 3) {
+        return this.addGoodsForm.goods_cat[2]
+      }
+      return null
+    }
+  },
 }
 </script>
 
 <style lang="less" scoped>
+.el-checkbox {
+  margin: 0 15px 0 0 !important;
+}
 </style>

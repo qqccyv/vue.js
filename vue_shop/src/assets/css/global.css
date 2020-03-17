@@ -30,3 +30,12 @@ body,
 .el-steps {
     margin: 15px 0;
 }
+
+.el-form-item__label {
+    text-align: left !important;
+    float: none;
+}
+
+.el-form-item__content {
+    margin-left: 0 !important;
+}
