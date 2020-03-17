@@ -56,7 +56,12 @@
               <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
           </el-tab-pane>
-          <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
+          <el-tab-pane label="商品内容" name="4">
+            <quill-editor v-model="addGoodsForm.goods_introduce">
+
+            </quill-editor>
+            <el-button class="addbtn" type="primary" @click="addGoods">添加商品</el-button>
+          </el-tab-pane>
         </el-tabs>
       </el-form>
     </el-card>
@@ -68,6 +73,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
   data() {
     return {
@@ -174,6 +180,8 @@ export default {
         })
         if (res.meta.status != 200) return this.$message.error('获取数据失败')
         this.onlyGoodsData = res.data
+        // console.log( this.onlyGoodsData);
+
       }
 
     },
@@ -199,6 +207,36 @@ export default {
       this.addGoodsForm.pics.push(picObj)
       // console.log(this.addGoodsForm.pics);
 
+    },
+    //添加商品，并对商品数据进行格式处理
+    addGoods() {
+      // console.log(this.addGoodsForm.goods_introduce);
+      // 预验证
+      this.$refs.addGoodsFormRef.validate(async valid => {
+        if (!valid) return this.$message.error('请填写商品必要选项')
+        const form = _.cloneDeep(this.addGoodsForm)
+        form.goods_cat = form.goods_cat.join(',')
+        this.manyGoodsData.forEach(item => {
+          let newGoodsObj = {
+            attr_id: item.attr_id,
+            attr_value: item.attr_vals.join(' ')
+          }
+          form.attrs.push(newGoodsObj)
+        })
+        this.onlyGoodsData.forEach(item=>{
+           let newGoodsObj = {
+            attr_id: item.attr_id,
+            attr_value: item.attr_vals
+          }
+          form.attrs.push(newGoodsObj)
+        })
+        // console.log(form);
+        const {data: res} = await this.$http.post('/goods',form)
+        if(res.meta.status !=201) return this.$message.error('添加商品失败')
+        this.$message.success('商品添加成功')
+        this.$router.push('/goods')
+      })
+
     }
   },
   computed: {
@@ -216,7 +254,10 @@ export default {
 .el-checkbox {
   margin: 0 15px 0 0 !important;
 }
-.previewImg img{
+.previewImg img {
   width: 100%;
+}
+.addbtn {
+  margin-top: 20px;
 }
 </style>

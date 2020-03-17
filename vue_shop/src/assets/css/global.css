@@ -39,3 +39,7 @@ body,
 .el-form-item__content {
     margin-left: 0 !important;
 }
+
+.ql-editor {
+    min-height: 300px;
+}
