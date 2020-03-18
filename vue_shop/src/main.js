@@ -11,6 +11,14 @@ import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 
 import Axios from 'axios'
+
+//引入时间线组件并注册
+// import Timeline from './timeline/index.js'
+// import TimelineItem from './timeline-item/index.js'
+// Vue.use(Timeline)
+// Vue.use(TimelineItem)
+// Vue.component('el-timeline', Timeline)
+// Vue.component('el-timeline-item', TimelineItem)
 //引入树形表格插件，并注册为全局组件
 import ZkTable from 'vue-table-with-tree-grid'
 
