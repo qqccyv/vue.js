@@ -32,7 +32,8 @@ import 'quill/dist/quill.bubble.css' // for bubble theme
 
 Vue.use(VueQuillEditor, /* { default global options } */ )
 
-
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 //定义全局时间过滤器
 Vue.filter('dateFormat', function(originVal) {
@@ -52,12 +53,22 @@ Vue.filter('dateFormat', function(originVal) {
 Axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 Axios.interceptors.request.use(config => {
     // Do something before request is sent
+    NProgress.start()
     config.headers.Authorization = window.sessionStorage.getItem('token')
     return config;
 }, error => {
     // Do something with request error
     return Promise.reject(error);
 });
+Axios.interceptors.response.use((config) => {
+    // Do something before request is sent
+    NProgress.done()
+    return config
+}, error => {
+    // Do something with request error
+    return Promise.reject(error);
+});
+
 Vue.prototype.$http = Axios
 
 Vue.config.productionTip = false
