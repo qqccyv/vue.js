@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="ordersList != null">
     <!-- 面包屑导航 -->
     <el-breadcrumb separator=">">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
@@ -43,8 +43,8 @@
         </el-table-column>
       </el-table>
       <!-- 分页区 -->
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryOrdersInfo.pagenum" :page-sizes="[10, 15, 20, 30]" :page-size="queryOrdersInfo.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total">
-      </el-pagination>
+      <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="queryOrdersInfo.pagenum" :page-sizes="[10, 15, 20, 30]" :page-size="queryOrdersInfo.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+      </el-pagination> -->
     </el-card>
     <!-- 地址编辑修改 -->
     <el-dialog title="地址修改" :visible.sync="adressDialogVisible" width="50%">
@@ -67,7 +67,7 @@
   title="提示"
   :visible.sync="logisticsDialogVisible"
   width="50%">
-   <el-timeline :reverse="reverse">
+   <el-timeline :reverse="true">
     <el-timeline-item
       v-for="(activity, index) in logisticsData"
       :key="index"
@@ -197,6 +197,9 @@ export default {
     //显示地址编辑框
     showAdressDialog() {
       this.adressDialogVisible = true
+    },
+    handleChange(){
+
     }
   },
 }
