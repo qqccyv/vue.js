@@ -1,5 +1,8 @@
 module.exports = {
+    publicPath: process.env.NODE_ENV === 'production' ?
+        '/WEB-DISPLAY/' : '/', //或不做判断 直接设置为'/WEB-DISPLAY/'
     chainWebpack: config => {
+
         //发布模式
         config.when(process.env.NODE_ENV === 'production', config => {
                 //entry找到默认的打包入口，调用clear则是删除默认的打包入口
